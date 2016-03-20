@@ -13,14 +13,7 @@ PMML evaluator library for the Android operating system (http://www.android.com/
 
 # Installation #
 
-JPMML-Android depends on the `1.2-SNAPSHOT` version of the JPMML-Evaluator library, which needs to be built and installed locally:
-```
-git clone https://github.com/jpmml/jpmml-evaluator.git
-cd jpmml-evaluator
-mvn clean install
-```
-
-After that, enter the project root directory and build using [Apache Maven] (http://maven.apache.org/):
+Enter the project root directory and build using [Apache Maven] (http://maven.apache.org/):
 ```
 mvn clean install
 ```
@@ -69,8 +62,6 @@ public ModelEvaluator<?> loadSer(String serName) throws Exception {
 	}
 }
 ```
-
-The Java serialization and deserialization work is handled by the `org.jpmml.model.SerializationUtil` utility class, which was introduced in JPMML-Model library version 1.2.12. If either the APK build or the App cannot find this class, then you are using an outdated version of the JPMML-Evaluator library.
 
 # License #
 
