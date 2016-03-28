@@ -49,6 +49,36 @@
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.jpmml</groupId>
+				<artifactId>pmml-maven-plugin</artifactId>
+				<version>1.2.13</version>
+				<executions>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>ser</goal>
+						</goals>
+						<configuration>
+							<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+								<targetExtension>.pmml.ser</targetExtension>
+							</fileMapper>
+							<modelSets>
+								<modelSet>
+									<dir>src/main/pmml</dir>
+									<outputDir>target/generated-sources/combined-assets</outputDir>
+									<includes>
+										<include>*.pmml</include>
+									</includes>
+								</modelSet>
+							</modelSets>
+							<visitorClasses>
+								<visitorClass>org.jpmml.model.visitors.StringInterner</visitorClass>
+							</visitorClasses>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
