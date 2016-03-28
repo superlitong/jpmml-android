@@ -28,32 +28,38 @@ Android does not provide its own JAXB runtime, and is generally unsuitable for w
 
 The suggested workaround is to transmit models using Java Serialization.
 
-The conversion from PMML data format to Java Serialization (SER) data format takes place during APK build:
+Models can be converted from PMML data format to Java Serialization (SER) data format using the JPMML-Model Maven plugin:
+
+```xml
+<plugin>
+	<groupId>org.jpmml</groupId>
+	<artifactId>pmml-maven-plugin</artifactId>
+	<version>${pmml-model.version}</version>
+	<executions>
+		<execution>
+			<phase>process-resources</phase>
+			<goals>
+				<goal>ser</goal>
+			</goals>
+			<configuration>
+				<modelSets>
+					<modelSet>
+						<dir>src/main/pmml</dir>
+						<outputDir>target/generated-sources/combined-assets</outputDir>
+					</modelSet>
+				</modelSets>
+				<visitorClasses>
+					<visitorClass>org.jpmml.model.visitors.StringInterner</visitorClass>
+				</visitorClasses>
+			</configuration>
+		</execution>
+	</executions>
+</plugin>
 ```
-static
-public void convertPmmlToSer(File pmmlFile, File serFile) throws Exception {
-	PMML pmml;
 
-	try(InputStream is = new FileInputStream(pmmlFile)){
-		Source source = ImportFilter.apply(new InputSource(is));
+The App can use the `org.jpmml.android.EvaluatorUtil#createEvaluator(InputStream)` utility method to create a model evaluator instance based on a streamable SER asset or resource:
 
-		pmml = JAXBUtil.unmarshalPMML(source);
-	}
-
-	// Remove SAX Locator information
-	LocatorNullifier locatorNullifier = new LocatorNullifier();
-	locatorNullifier.applyTo(pmml);
-
-	try(OutputStream os = new FileOutputStream(serFile)){
-		SerializationUtil.serializePMML(pmml, os);
-	}
-}
-```
-
-The SER file should be placed into the assets directory.
-
-The App can use the `org.jpmml.android.EvaluatorUtil#createEvaluator(InputStream)` utility method to create a model evaluator instance:
-```
+```java
 public ModelEvaluator<?> loadSer(String serName) throws Exception {
 	AssetManager assetManager = getAssets();
 
@@ -62,6 +68,8 @@ public ModelEvaluator<?> loadSer(String serName) throws Exception {
 	}
 }
 ```
+
+Extra caution is required to ensure that the SER producer (ie. the JPMML-Model Maven plugin) and the SER consumer (ie. the JPMML-Android library) are using exactly the same version of the JPMML-Model library at all times.
 
 # License #
 
