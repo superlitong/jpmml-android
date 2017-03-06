@@ -37,7 +37,7 @@ public class EvaluatorUtil {
 
 		ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
 
-		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelManager(pmml);
+		ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
 		modelEvaluator.verify();
 
 		return modelEvaluator;

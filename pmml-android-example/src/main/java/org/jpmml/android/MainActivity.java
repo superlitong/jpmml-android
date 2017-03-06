@@ -19,6 +19,7 @@
 package org.jpmml.android;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import org.dmg.pmml.FieldName;
 import org.jpmml.evaluator.Evaluator;
+import org.jpmml.evaluator.ModelField;
 
 public class MainActivity extends Activity {
 
@@ -65,9 +67,9 @@ public class MainActivity extends Activity {
 	}
 
 	private void showEvaluatorDialog(Evaluator evaluator){
-		List<FieldName> activeFields = evaluator.getActiveFields();
-		List<FieldName> targetFields = org.jpmml.evaluator.EvaluatorUtil.getTargetFields(evaluator);
-		List<FieldName> outputFields = org.jpmml.evaluator.EvaluatorUtil.getOutputFields(evaluator);
+		List<FieldName> activeFields = getNames(evaluator.getActiveFields());
+		List<FieldName> targetFields = getNames(evaluator.getTargetFields());
+		List<FieldName> outputFields = getNames(evaluator.getOutputFields());
 
 		StringBuilder sb = new StringBuilder();
 
@@ -91,5 +93,18 @@ public class MainActivity extends Activity {
 		try(InputStream is = assetManager.open("model.pmml.ser")){
 			return EvaluatorUtil.createEvaluator(is);
 		}
+	}
+
+	static
+	private List<FieldName> getNames(List<? extends ModelField> modelFields){
+		List<FieldName> names = new ArrayList<>(modelFields.size());
+
+		for(ModelField modelField : modelFields){
+			FieldName name = modelField.getName();
+
+			names.add(name);
+		}
+
+		return names;
 	}
 }
